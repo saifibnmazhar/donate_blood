@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+    <style type="text/css">
+
+    .dropdown{
+       display:inline-block; 
+        
+    }
+
+    #example1{
+        
+        border:1px solid #000;
+        height:150px;
+        width:300px;
+        margin-top:20px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="dropdown">
+        <select name="one" class="dropdown-select">
+        <option value="">Select Year</option>
+        <option value="0">2014</option>
+        <option value="1">2013</option>
+        <option value="2">2012</option>
+        </select>           
+    </div>
+
+
+    <div class="dropdown ">
+        <select name="two" class="dropdown-select">
+        <option value="">Select Month</option>
+        <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">December</option>
+        </select>           
+    </div>
+    <div id="example1">Table</div>
+</body>
+</html>
+<script type="text/javascript" href="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" href="http://michaeleisenbraun.com/columns/javascripts/jquery.columns.min.js"></script>
+
+<script type="text/javascript">
+var objMonth=null;
+var cloneObj;
+var MonthMap={'January':'jan','February':'Feb','March':'March'};
+$(document).ready(function (){
+    cloneObj= $("#example1").clone(); 
+    $('select[name=one]').on('change', function() {
+        var selectedYear=($("option:selected", this).text());
+        if (selectedYear!="Select Year"){
+   
+        for (var a in data){
+            
+            if(data[a].year==selectedYear){
+                
+                objMonth=data[a];
+               
+                return false;
+            }
+             }
+        }else{
+        objMonth=null;
+        }
+    });
+    $('select[name=two]').on('change', function() {
+    var selectedYear=($("option:selected",  $('select[name=one]')).text());
+        if (selectedYear!="Select Year"){
+             var selectedMonth=($("option:selected", this).text());
+            var jsonValue=objMonth[MonthMap[selectedMonth]];
+            $("#example1").replaceWith(cloneObj.clone());
+            
+            $('#example1').columns({ data : jsonValue});    
+        }else{
+        alert("Please Select year please");
+        }
+    });
+ });
+</script>
+<script type="text/javascript">
+$.ajax({
+    url : 'data/front_finance.json',
+    dataType : 'json',
+    success : function (json) {
+
+        var customer = $('#example1').columns({
+                data : json,
+                schema : [{
+                        "header" : "ID",
+                        "key" : "id",
+                        "template" : "{{id}}"
+                    }, {
+                        "header" : "Name",
+                        "key" : "name",
+                        "template" : '<a href="#" onclick="javascript:ShowDialog(this.id);return false;" id="{{name}}" class="topopup">{{name}}</a>'
+                    }, {
+                        "header" : "Actual",
+                        "key" : "actual"
+                    }, {
+                        "header" : "Target",
+                        "key" : "target"
+                    }, {
+                        "header" : "Status",
+                        "key" : "status",
+                        "template" : "<img src ='{{status}}' alt='{{status}}'></img>"
+                    }, {
+                        "header" : "Trend",
+                        "key" : "trend",
+                        "template" : "<img src ='{{trend}}' alt='{{trend}}'></img>"
+                    }
+                ]
+            });
+    }
+});
+</script>
